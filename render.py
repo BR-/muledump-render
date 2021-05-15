@@ -21,7 +21,7 @@ def load_image(imagename):
 		images[imagename] = Image.open(requests.get(IMAGE_URL + imagename + ".png", stream=True).raw)
 	return images[imagename]
 
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageDraw
 import json
 import xml
 import requests
@@ -37,6 +37,7 @@ IMAGE_URL = "https://www.haizor.net/rotmg/assets/production/sheets/"
 soup = BeautifulSoup(requests.get(XML_URL).content, "html.parser")
 images = {}
 render = Image.new("RGBA", (40 * 100, 40 * 100))
+renderdraw = ImageDraw.Draw(render)
 imgx = 2 #skip Empty and Unknown slots
 imgy = 0
 allblack = Image.new("RGBA", (40, 40), "BLACK")
@@ -183,6 +184,19 @@ for a in soup.find_all("a"):
 						render.paste(allblack, (imgx * 40, imgy * 40), mask)
 						render.paste(img, (imgx * 40, imgy * 40), mask.split()[0])
 						render.paste(img, (imgx * 40, imgy * 40), mask.split()[1])
+
+					if "Quantity" in dir(obj):
+						num = obj.Quantity.cdata
+						renderdraw.text((imgx * 40 - 1, imgy * 40 - 1), num, fill="#000")
+						renderdraw.text((imgx * 40 - 1, imgy * 40 - 0), num, fill="#000")
+						renderdraw.text((imgx * 40 - 1, imgy * 40 + 1), num, fill="#000")
+						renderdraw.text((imgx * 40 - 0, imgy * 40 - 1), num, fill="#000")
+						renderdraw.text((imgx * 40 - 0, imgy * 40 - 0), num, fill="#000")
+						renderdraw.text((imgx * 40 - 0, imgy * 40 + 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 1, imgy * 40 - 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 1, imgy * 40 - 0), num, fill="#000")
+						renderdraw.text((imgx * 40 + 1, imgy * 40 + 1), num, fill="#000")
+						renderdraw.text((imgx * 40, imgy * 40), num, fill="#fff")
 
 					items[type] = [id, slot, tier, imgx * 40, imgy * 40, xp, fp, int(obj.BagType.cdata), soulbound, utst]
 					imgx += 1
