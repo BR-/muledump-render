@@ -1,0 +1,13 @@
+constants.js::{classes, skins, petAbilities, textures}
+slotmap.js needs manual updating it looks like, eg. for Mace
+sheets.js is just b64 of the games textures + renders.png
+portrait.js might be auto fixed on its own if I do the above stuff
+drop shadow - blur the alpha channel and mask allblack in with it
+parse manifest.xml to get tile size instead of guessing by filename
+don't rely on haizor to get the data
+crop renders.png to get rid of blank space
+output full files ready to copy/paste wholesale into muledump
+look at Xythium's files
+clean up code
+Settings Manager > Item Group Sorting needs Mace too, unless it pulls from slotmap
+pullreq
