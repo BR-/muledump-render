@@ -136,7 +136,7 @@ for a in soup.find_all("a"):
 					#edges = icon.split()[-1].filter(ImageFilter.FIND_EDGES)
 					edges = icon.split()[-1].filter(ImageFilter.MaxFilter(3))
 					render.paste(allblack, (imgx * 40, imgy * 40), edges)
-					icon = icon.crop((1, 1, 38, 38))
+					icon = icon.crop((1, 1, 39, 39))
 					render.paste(icon, (imgx * 40 + 1, imgy * 40 + 1), icon)
 
 					if "Mask" in dir(obj):
