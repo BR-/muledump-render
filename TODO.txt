@@ -11,3 +11,93 @@ look at Xythium's files
 clean up code
 Settings Manager > Item Group Sorting needs Mace too, unless it pulls from slotmap
 pullreq
+
+
+
+
+constants.js::classes
+
+players.xml
+
+type	0x0300
+id	Rogue
+base	150
+averages625
+maxes	720
+slots	2 13 6 9
+
+Object.Class.cdata == "Player"
+
+// type: ["id", base, averages, maxes, slots]
+classes[int(Object["type"])] = [
+	Object["id"],
+	[
+		int(Object.MaxHitPoints.cdata),
+		int(Object.MaxMagicPoints.cdata),
+		int(Object.Attack.cdata),
+		int(Object.Defense.cdata),
+		int(Object.Speed.cdata),
+		int(Object.Dexterity.cdata),
+		int(Object.HpRegen.cdata),
+		int(Object.MpRegen.cdata),
+	],
+	[
+		(LevelIncrease["min"] + LevelIncrease["max"]) / 2 + Base,
+	],
+	[
+		int(Object.MaxHitPoints["max"]),
+		int(Object.MaxMagicPoints["max"]),
+		int(Object.Attack["max"]),
+		int(Object.Defense["max"]),
+		int(Object.Speed["max"]),
+		int(Object.Dexterity["max"]),
+		int(Object.HpRegen["max"]),
+		int(Object.MpRegen["max"]),
+	],
+	[int(x) for x in Object.SlotTypes.cdata.split(",")[:4]]
+]
+
+
+
+constants.js::skins
+skins.xml
+// type: ["id", index, 16x16, "sheet", class]
+
+   0x0300: ["Rogue", 0, false, "players", 0x0300],
+
+Object.Class.cdata == "Skin" or "Skin" in dir(Object)
+
+skins[int(Object["type"])] = [
+	Object["id"],
+	Object.AnimatedTexture.Index.cdata,
+	"16" in Object.AnimatedTexture.File.cdata,
+	Object.AnimatedTexture.File.cdata,
+	Object.PlayerClassType.cdata
+]
+
+
+
+
+
+constants.js::petAbilities
+pets.xml
+Object.Class.cdata == "PetAbility" or "PetAbility" in dir(Object)
+petAbilities[int(Object["type"])] = Object["id"]
+
+
+
+
+
+
+
+constants.js::textures
+dyes.xml, textiles.xml
+texId: ["clothing id", clothing type, "accessory id", accessory type]
+0x01000000: ["Black Clothing Dye", 0x1007, "Black Accessory Dye", 0x1107],
+ 0xa000058: ["Large Sanctuary Cloth", 0x127d, "Small Sanctuary Cloth", 0x137d],
+0xffffffff: ["Magical Clothing Dye Remover", 0x999, "Magical Accessory Dye Remover", 0x998],
+
+
+Object.Class == "Dye"
+textures[int(Object.Tex1.cdata)] = [Object["id"], int(Object["type"]), _, _]
+textures[int(Object.Tex2.cdata)] = [_, _, Object["id"], int(Object["type"])]
