@@ -187,16 +187,15 @@ for a in soup.find_all("a"):
 
 					if "Quantity" in dir(obj):
 						num = obj.Quantity.cdata
-						renderdraw.text((imgx * 40 - 1, imgy * 40 - 1), num, fill="#000")
-						renderdraw.text((imgx * 40 - 1, imgy * 40 - 0), num, fill="#000")
-						renderdraw.text((imgx * 40 - 1, imgy * 40 + 1), num, fill="#000")
-						renderdraw.text((imgx * 40 - 0, imgy * 40 - 1), num, fill="#000")
-						renderdraw.text((imgx * 40 - 0, imgy * 40 - 0), num, fill="#000")
-						renderdraw.text((imgx * 40 - 0, imgy * 40 + 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 1, imgy * 40 - 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 1, imgy * 40 - 0), num, fill="#000")
-						renderdraw.text((imgx * 40 + 1, imgy * 40 + 1), num, fill="#000")
-						renderdraw.text((imgx * 40, imgy * 40), num, fill="#fff")
+						renderdraw.text((imgx * 40 + 3 - 1, imgy * 40 + 3 - 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 - 1, imgy * 40 + 3 - 0), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 - 1, imgy * 40 + 3 + 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 - 0, imgy * 40 + 3 - 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 - 0, imgy * 40 + 3 + 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 + 1, imgy * 40 + 3 - 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 + 1, imgy * 40 + 3 - 0), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 + 1, imgy * 40 + 3 + 1), num, fill="#000")
+						renderdraw.text((imgx * 40 + 3 - 0, imgy * 40 + 3 - 0), num, fill="#fff")
 
 					items[type] = [id, slot, tier, imgx * 40, imgy * 40, xp, fp, int(obj.BagType.cdata), soulbound, utst]
 					imgx += 1
