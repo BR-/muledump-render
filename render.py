@@ -242,8 +242,9 @@ for a in soup.find_all("a"):
 						srcy = imgTileSize * imageindex
 
 					icon = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((40, 40), Image.NEAREST)
-					#edges = icon.split()[-1].filter(ImageFilter.FIND_EDGES)
 					edges = icon.split()[-1].filter(ImageFilter.MaxFilter(3))
+					shadow = edges.filter(ImageFilter.BoxBlur(7)).point(lambda alpha: alpha // 2)
+					render.paste(allblack, (imgx * 40, imgy * 40), shadow)
 					render.paste(allblack, (imgx * 40, imgy * 40), edges)
 					icon = icon.crop((1, 1, 39, 39))
 					render.paste(icon, (imgx * 40 + 1, imgy * 40 + 1), icon)
