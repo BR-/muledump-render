@@ -1,3 +1,5 @@
+GAME_VERSION = "1.3.3.1"
+
 def get_concat_h_repeat(im, column):
     dst = Image.new('RGB', (im.width * column, im.height))
     for x in range(column):
@@ -46,6 +48,10 @@ items = {
      -1: ["Empty Slot", 0, -1, 0, 0, 0, 0, 0, False, 0],
       0x0: ["Unknown Item", 0, -1, 40, 0, 0, 0, 0, False, 0],
 }
+classes = {}
+skins = {}
+petAbilities = {}
+textures = {}
 
 render.paste(Image.open("error.png"), (40, 0))
 
@@ -66,7 +72,93 @@ for a in soup.find_all("a"):
 			for obj in data.Objects.Object:
 				if "Class" not in dir(obj):
 					continue
-				if obj.Class.cdata == "Equipment" or obj.Class.cdata == "Dye":
+				if obj.Class.cdata == "Player":
+					baseStats = [
+						int(obj.MaxHitPoints.cdata),
+						int(obj.MaxMagicPoints.cdata),
+						int(obj.Attack.cdata),
+						int(obj.Defense.cdata),
+						int(obj.Speed.cdata),
+						int(obj.Dexterity.cdata),
+						int(obj.HpRegen.cdata),
+						int(obj.MpRegen.cdata),
+					]
+					averages = {}
+					for f in obj.LevelIncrease:
+						averages[f.cdata] = (int(f["min"]) + int(f["max"])) / 2 * 19
+					avgs = [
+						averages["MaxHitPoints"],
+						averages["MaxMagicPoints"],
+						averages["Attack"],
+						averages["Defense"],
+						averages["Speed"],
+						averages["Dexterity"],
+						averages["HpRegen"],
+						averages["MpRegen"],
+					]
+					avgs = [x+y for x,y in zip(baseStats, avgs)]
+					if obj["type"].startswith("0x"):
+						key = int(obj["type"][2:], 16)
+					else:
+						1/0
+					classes[key] = [
+						obj["id"],
+						baseStats,
+						avgs,
+						[
+							int(obj.MaxHitPoints["max"]),
+							int(obj.MaxMagicPoints["max"]),
+							int(obj.Attack["max"]),
+							int(obj.Defense["max"]),
+							int(obj.Speed["max"]),
+							int(obj.Dexterity["max"]),
+							int(obj.HpRegen["max"]),
+							int(obj.MpRegen["max"]),
+						],
+						[int(x) for x in obj.SlotTypes.cdata.split(",")[:4]]
+					]
+				elif obj.Class.cdata == "Skin" or "Skin" in dir(obj):
+					if not obj.PlayerClassType.cdata.startswith('0x'):
+						1/0
+					if not obj["type"].startswith('0x'):
+						1/0
+					if obj.AnimatedTexture.Index.cdata.startswith('0x'):
+						index = int(obj.AnimatedTexture.Index.cdata[2:], 16)
+					else:
+						index = int(obj.AnimatedTexture.Index.cdata)
+					skins[int(obj["type"][2:], 16)] = [
+						obj["id"],
+						index,
+						"16" in obj.AnimatedTexture.File.cdata,
+						obj.AnimatedTexture.File.cdata,
+						int(obj.PlayerClassType.cdata[2:], 16)
+					]
+				elif obj.Class.cdata == "PetAbility" or "PetAbility" in dir(obj):
+					if obj["type"].startswith("0x"):
+						petAbilities[int(obj["type"][2:], 16)] = obj["id"]
+					else:
+						1/0
+				elif obj.Class.cdata == "Dye":
+					if "Tex1" in dir(obj):
+						key = obj.Tex1.cdata
+						offs = 0
+					elif "Tex2" in dir(obj):
+						key = obj.Tex2.cdata
+						offs = 2
+					else:
+						1/0
+					if key.startswith("0x"):
+						key = int(key[2:], 16)
+					else:
+						1/0 #key = int(key)
+					data = textures.get(key, [None]*4)
+					data[offs+0] = obj["id"]
+					if obj["type"].startswith("0x"):
+						data[offs+1] = int(obj["type"][2:], 16)
+					else:
+						1/0
+					textures[key] = data
+				elif obj.Class.cdata == "Equipment" or obj.Class.cdata == "Dye":
 					if "BagType" not in dir(obj):
 						continue #Procs are Equipment too for some reason!??
 					if "DisplayId" in dir(obj) and obj.Class.cdata != "Dye":
@@ -205,14 +297,39 @@ for a in soup.find_all("a"):
 						if imgy >= 100:
 							1/0
 
+from datetime import datetime
+now = datetime.now().strftime("%Y%m%d-%H%M%S")
 
-with open("constants.txt", "w") as fh:
-	fh.write("{\n")
-	for item in items:
-		if item == -1:
-			fh.write(f"'{item}': {items[item]},\n".replace("False,", "false,").replace("True,", "true,"))
+with open("constants.js", "w") as fh:
+	fh.write("// Generated with https://github.com/BR-/muledump-render\n\n")
+	fh.write(f'rendersVersion = "renders-{now}-{GAME_VERSION}"\n\n')
+	fh.write('//   type: ["id", SlotType, Tier, x, y, FameBonus, feedPower, BagType, Soulbound, UT/ST],\n')
+	fh.write("items = {\n")
+	for itemid, itemdata in sorted(items.items()):
+		if itemid == -1:
+			fh.write(f"  '{itemid}': {itemdata},\n".replace("False,", "false,").replace("True,", "true,"))
 		else:
-			fh.write(f"{item}: {items[item]},\n".replace("False,", "false,").replace("True,", "true,"))
+			fh.write(f"  {itemid}: {itemdata},\n".replace("False,", "false,").replace("True,", "true,"))
+	fh.write("};\n\n")
+	fh.write('//   type: ["id", base, averages, maxes, slots]\n')
+	fh.write("classes = {\n")
+	for classid, classdata in sorted(classes.items()):
+		fh.write(f"  {classid}: {classdata},\n")
+	fh.write("};\n\n")
+	fh.write('//   type: ["id", index, 16x16, "sheet", class]\n')
+	fh.write("skins = {\n")
+	for skinid, skindata in sorted(skins.items()):
+		fh.write(f"  {skinid}: {skindata},\n".replace("False,", "false,").replace("True,", "true,"))
+	fh.write("};\n\n")
+	fh.write('//   type: "id"')
+	fh.write("petAbilities = {\n")
+	for petAbilId, petAbilName in sorted(petAbilities.items()):
+		fh.write(f"  {petAbilId}: {petAbilName},\n")
+	fh.write("};\n\n")
+	fh.write('//   texId: ["clothing id", clothing type, "accessory id", accessory type]\n')
+	fh.write("textures = {\n")
+	for textureId, textureData in sorted(textures.items()):
+		fh.write(f"  {textureId}: {textureData},\n")
 	fh.write("}\n")
 
 render.save("renders.png", "PNG", quality=100)
