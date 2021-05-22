@@ -33,7 +33,7 @@ import untangle
 import base64
 import io
 
-skinfiles = set()
+skinfiles = set(["players"])
 textilefiles = set()
 
 requests_cache.install_cache(backend="sqlite")
@@ -122,7 +122,18 @@ for a in soup.find_all("a"):
 						],
 						[int(x) for x in obj.SlotTypes.cdata.split(",")[:4]]
 					]
-				elif obj.Class.cdata == "Skin" or "Skin" in dir(obj):
+					if obj.AnimatedTexture.Index.cdata.startswith('0x'):
+						index = int(obj.AnimatedTexture.Index.cdata[2:], 16)
+					else:
+						index = int(obj.AnimatedTexture.Index.cdata)
+					skins[key] = [
+						obj["id"],
+						index,
+						False,
+						obj.AnimatedTexture.File.cdata,
+						key,
+					]
+				if obj.Class.cdata == "Skin" or "Skin" in dir(obj):
 					if not obj.PlayerClassType.cdata.startswith('0x'):
 						1/0
 					if not obj["type"].startswith('0x'):
@@ -144,7 +155,7 @@ for a in soup.find_all("a"):
 						petAbilities[int(obj["type"][2:], 16)] = obj["id"]
 					else:
 						1/0
-				elif obj.Class.cdata == "Dye":
+				if obj.Class.cdata == "Dye":
 					if "Tex1" in dir(obj):
 						key = obj.Tex1.cdata
 						offs = 0
@@ -164,7 +175,7 @@ for a in soup.find_all("a"):
 					else:
 						1/0
 					textures[key] = data
-				elif obj.Class.cdata == "Equipment" or obj.Class.cdata == "Dye":
+				if obj.Class.cdata == "Equipment" or obj.Class.cdata == "Dye":
 					if "BagType" not in dir(obj):
 						continue #Procs are Equipment too for some reason!??
 					if "DisplayId" in dir(obj) and obj.Class.cdata != "Dye":
