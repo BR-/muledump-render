@@ -1,5 +1,4 @@
 slotmap.js needs manual updating it looks like, eg. for Mace
-sheets.js is just b64 of the games textures + renders.png
 portrait.js might be auto fixed on its own if I do the above stuff
 drop shadow - blur the alpha channel and mask allblack in with it
 parse manifest.xml to get tile size instead of guessing by filename

@@ -30,6 +30,11 @@ import requests
 import requests_cache
 from bs4 import BeautifulSoup
 import untangle
+import base64
+import io
+
+skinfiles = set()
+textilefiles = set()
 
 requests_cache.install_cache(backend="sqlite")
 
@@ -133,6 +138,7 @@ for a in soup.find_all("a"):
 						obj.AnimatedTexture.File.cdata,
 						int(obj.PlayerClassType.cdata[2:], 16)
 					]
+					skinfiles.add(obj.AnimatedTexture.File.cdata)
 				elif obj.Class.cdata == "PetAbility" or "PetAbility" in dir(obj):
 					if obj["type"].startswith("0x"):
 						petAbilities[int(obj["type"][2:], 16)] = obj["id"]
@@ -266,6 +272,7 @@ for a in soup.find_all("a"):
 							if r > 0 or g > 0:
 								print(href,id)
 								1/0
+							textilefiles.add(a)
 							img = load_image(f"textile{a}x{a}")
 							srcw = img.size[0] / a
 							srcx = a * (b % srcw)
@@ -334,4 +341,21 @@ with open("constants.js", "w") as fh:
 
 render.save("renders.png", "PNG", quality=100)
 
-#print(list(images.keys()))
+with open("sheets.js", "w") as fh:
+	fh.write("textiles = {\n")
+	for textilefile in sorted(textilefiles):
+		textiledata = base64.b64encode(requests.get(IMAGE_URL + f"textile{textilefile}x{textilefile}.png").content).decode()
+		fh.write(f"  {textilefile}: 'data:image/png;base64,{textiledata}',\n")
+	fh.write("};\n\n")
+	fh.write("skinsheets = {\n")
+	for skinfile in sorted(skinfiles):
+		skindata = base64.b64encode(requests.get(IMAGE_URL + skinfile + ".png").content).decode()
+		fh.write(f"  {skinfile}: 'data:image/png;base64,{skindata}',\n")
+		skindata = base64.b64encode(requests.get(IMAGE_URL + skinfile + "Mask.png").content).decode()
+		fh.write(f"  {skinfile}Mask: 'data:image/png;base64,{skindata}',\n")
+	fh.write("};\n\n")
+
+	buf = io.BytesIO()
+	render.save(buf, "PNG", quality=100)
+	renderdata = base64.b64encode(buf.getvalue()).decode()
+	fh.write("renders = '{renderdata}';\n")
