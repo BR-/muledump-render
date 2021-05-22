@@ -331,7 +331,7 @@ with open("constants.js", "w") as fh:
 	fh.write('//   type: "id"\n')
 	fh.write("petAbilities = {\n")
 	for petAbilId, petAbilName in sorted(petAbilities.items()):
-		fh.write(f"  {petAbilId}: {petAbilName},\n")
+		fh.write(f'  {petAbilId}: "{petAbilName}",\n')
 	fh.write("};\n\n")
 	fh.write('//   texId: ["clothing id", clothing type, "accessory id", accessory type]\n')
 	fh.write("textures = {\n")
