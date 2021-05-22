@@ -66,8 +66,8 @@ for a in soup.find_all("a"):
 		#print(">>>", href)
 		try:
 			xmldata = requests.get(XML_URL + href).content.decode("utf-8")
-			if "playerskinsMask" in xmldata:
-				print(href)
+			#if "playerskins_mask" in xmldata:
+				#print(href)
 			data = untangle.parse(xmldata)
 		except xml.sax._exceptions.SAXParseException:
 			#print("       bad")
@@ -351,7 +351,7 @@ with open("sheets.js", "w") as fh:
 	for skinfile in sorted(skinfiles):
 		skindata = base64.b64encode(requests.get(IMAGE_URL + skinfile + ".png").content).decode()
 		fh.write(f"  {skinfile}: 'data:image/png;base64,{skindata}',\n")
-		skindata = base64.b64encode(requests.get(IMAGE_URL + skinfile + "Mask.png").content).decode()
+		skindata = base64.b64encode(requests.get(IMAGE_URL + skinfile + "_mask.png").content).decode()
 		fh.write(f"  {skinfile}Mask: 'data:image/png;base64,{skindata}',\n")
 	fh.write("};\n\n")
 
