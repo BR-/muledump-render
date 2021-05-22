@@ -1,7 +1,3 @@
-# important
-drop shadow - blur the alpha channel and mask allblack in with it
-crop renders.png to get rid of blank space
-
 # nice to have
 parse manifest.xml to get tile size instead of guessing by filename
 don't rely on haizor to get the data
