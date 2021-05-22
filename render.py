@@ -309,7 +309,7 @@ now = datetime.now().strftime("%Y%m%d-%H%M%S")
 
 with open("constants.js", "w") as fh:
 	fh.write("// Generated with https://github.com/BR-/muledump-render\n\n")
-	fh.write(f'rendersVersion = "renders-{now}-{GAME_VERSION}"\n\n')
+	fh.write(f'rendersVersion = "renders-{now}-{GAME_VERSION}";\n\n')
 	fh.write('//   type: ["id", SlotType, Tier, x, y, FameBonus, feedPower, BagType, Soulbound, UT/ST],\n')
 	fh.write("items = {\n")
 	for itemid, itemdata in sorted(items.items()):
