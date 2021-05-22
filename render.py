@@ -369,4 +369,4 @@ with open("sheets.js", "w") as fh:
 	buf = io.BytesIO()
 	render.save(buf, "PNG", quality=100)
 	renderdata = base64.b64encode(buf.getvalue()).decode()
-	fh.write("renders = '{renderdata}';\n")
+	fh.write(f"renders = 'data:image/png;base64,{renderdata}';\n")
