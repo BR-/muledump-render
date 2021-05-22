@@ -1,4 +1,3 @@
-slotmap.js needs manual updating it looks like, eg. for Mace
 portrait.js might be auto fixed on its own if I do the above stuff
 drop shadow - blur the alpha channel and mask allblack in with it
 parse manifest.xml to get tile size instead of guessing by filename
@@ -9,3 +8,11 @@ look at Xythium's files
 clean up code
 Settings Manager > Item Group Sorting needs Mace too, unless it pulls from slotmap
 pullreq
+
+autogenerate if possible:
+lib/media/itemsilhouettes.png
+lib/media/itemsilhouettes_25p.png
+
+stuff that needs manual updating:
+slotmap.js
+lib/setuptools/src/setuptools.js::defaultSlotOrder

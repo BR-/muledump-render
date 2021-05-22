@@ -66,8 +66,8 @@ for a in soup.find_all("a"):
 		#print(">>>", href)
 		try:
 			xmldata = requests.get(XML_URL + href).content.decode("utf-8")
-			#if "textile4x4" in xmldata:
-				#print(href)
+			if "playerskinsMask" in xmldata:
+				print(href)
 			data = untangle.parse(xmldata)
 		except xml.sax._exceptions.SAXParseException:
 			#print("       bad")
@@ -328,7 +328,7 @@ with open("constants.js", "w") as fh:
 	for skinid, skindata in sorted(skins.items()):
 		fh.write(f"  {skinid}: {skindata},\n".replace("False,", "false,").replace("True,", "true,"))
 	fh.write("};\n\n")
-	fh.write('//   type: "id"')
+	fh.write('//   type: "id"\n')
 	fh.write("petAbilities = {\n")
 	for petAbilId, petAbilName in sorted(petAbilities.items()):
 		fh.write(f"  {petAbilId}: {petAbilName},\n")
