@@ -1,15 +1,24 @@
+# important
 drop shadow - blur the alpha channel and mask allblack in with it
+crop renders.png to get rid of blank space
+
+# nice to have
 parse manifest.xml to get tile size instead of guessing by filename
 don't rely on haizor to get the data
-crop renders.png to get rid of blank space
+
+# other things to do
 look at Xythium's files
 clean up code
 pullreq
 
-autogenerate if possible:
+
+
+
+
+# autogenerate if possible:
 lib/media/itemsilhouettes.png
 lib/media/itemsilhouettes_25p.png
 
-stuff that needs manual updating:
+# stuff that needs manual updating:
 slotmap.js
 lib/setuptools/src/setuptools.js::defaultSlotOrder
