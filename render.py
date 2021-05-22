@@ -315,6 +315,8 @@ for a in soup.find_all("a"):
 						if imgy >= 100:
 							1/0
 
+render = render.crop((0, 0, 40 * 100, 40 * (imgy + 1)))
+
 from datetime import datetime
 now = datetime.now().strftime("%Y%m%d-%H%M%S")
 
