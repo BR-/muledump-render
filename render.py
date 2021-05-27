@@ -43,22 +43,22 @@ IMAGE_URL = "https://www.haizor.net/rotmg/assets/production/sheets/"
 
 soup = BeautifulSoup(requests.get(XML_URL).content, "html.parser")
 images = {}
-render = Image.new("RGBA", (40 * 100, 40 * 100))
+render = Image.new("RGBA", (45 * 100 + 5, 45 * 100 + 5))
 renderdraw = ImageDraw.Draw(render)
 imgx = 2 #skip Empty and Unknown slots
 imgy = 0
 allblack = Image.new("RGBA", (40, 40), "BLACK")
 
 items = {
-     -1: ["Empty Slot", 0, -1, 0, 0, 0, 0, 0, False, 0],
-      0x0: ["Unknown Item", 0, -1, 40, 0, 0, 0, 0, False, 0],
+     -1: ["Empty Slot", 0, -1, 5, 5, 0, 0, 0, False, 0],
+      0x0: ["Unknown Item", 0, -1, 50, 5, 0, 0, 0, False, 0],
 }
 classes = {}
 skins = {}
 petAbilities = {}
 textures = {}
 
-render.paste(Image.open("error.png"), (40, 0))
+render.paste(Image.open("error.png"), (50, 5))
 
 for a in soup.find_all("a"):
 	href = a.get("href")
@@ -244,10 +244,10 @@ for a in soup.find_all("a"):
 					icon = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((40, 40), Image.NEAREST)
 					edges = icon.split()[-1].filter(ImageFilter.MaxFilter(3))
 					shadow = edges.filter(ImageFilter.BoxBlur(7)).point(lambda alpha: alpha // 2)
-					render.paste(allblack, (imgx * 40, imgy * 40), shadow)
-					render.paste(allblack, (imgx * 40, imgy * 40), edges)
+					render.paste(allblack, (imgx * 45 + 5, imgy * 45 + 5), shadow)
+					render.paste(allblack, (imgx * 45 + 5, imgy * 45 + 5), edges)
 					icon = icon.crop((1, 1, 39, 39))
-					render.paste(icon, (imgx * 40 + 1, imgy * 40 + 1), icon)
+					render.paste(icon, (imgx * 45 + 5 + 1, imgy * 45 + 5 + 1), icon)
 
 					if "Mask" in dir(obj):
 						maskname = obj.Mask.File.cdata
@@ -292,23 +292,23 @@ for a in soup.find_all("a"):
 							img = img.crop((srcx, srcy, srcx+a, srcy+a))
 							img = get_concat_tile_repeat(img, 10, 10)
 							img = img.crop((0, 0, 40, 40))
-						render.paste(allblack, (imgx * 40, imgy * 40), mask)
-						render.paste(img, (imgx * 40, imgy * 40), mask.split()[0])
-						render.paste(img, (imgx * 40, imgy * 40), mask.split()[1])
+						render.paste(allblack, (imgx * 45 + 5, imgy * 45 + 5), mask)
+						render.paste(img, (imgx * 45 + 5, imgy * 45 + 5), mask.split()[0])
+						render.paste(img, (imgx * 45 + 5, imgy * 45 + 5), mask.split()[1])
 
 					if "Quantity" in dir(obj):
 						num = obj.Quantity.cdata
-						renderdraw.text((imgx * 40 + 3 - 1, imgy * 40 + 3 - 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 - 1, imgy * 40 + 3 - 0), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 - 1, imgy * 40 + 3 + 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 - 0, imgy * 40 + 3 - 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 - 0, imgy * 40 + 3 + 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 + 1, imgy * 40 + 3 - 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 + 1, imgy * 40 + 3 - 0), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 + 1, imgy * 40 + 3 + 1), num, fill="#000")
-						renderdraw.text((imgx * 40 + 3 - 0, imgy * 40 + 3 - 0), num, fill="#fff")
+						renderdraw.text((imgx * 45 + 5 + 3 - 1, imgy * 45 + 5 + 3 - 1), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 - 1, imgy * 45 + 5 + 3 - 0), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 - 1, imgy * 45 + 5 + 3 + 1), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 - 0, imgy * 45 + 5 + 3 - 1), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 - 0, imgy * 45 + 5 + 3 + 1), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 + 1, imgy * 45 + 5 + 3 - 1), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 + 1, imgy * 45 + 5 + 3 - 0), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 + 1, imgy * 45 + 5 + 3 + 1), num, fill="#000")
+						renderdraw.text((imgx * 45 + 5 + 3 - 0, imgy * 45 + 5 + 3 - 0), num, fill="#fff")
 
-					items[type] = [id, slot, tier, imgx * 40, imgy * 40, xp, fp, int(obj.BagType.cdata), soulbound, utst]
+					items[type] = [id, slot, tier, imgx * 45 + 5, imgy * 45 + 5, xp, fp, int(obj.BagType.cdata), soulbound, utst]
 					imgx += 1
 					if imgx >= 100:
 						imgx = 0
@@ -316,7 +316,7 @@ for a in soup.find_all("a"):
 						if imgy >= 100:
 							1/0
 
-render = render.crop((0, 0, 40 * 100, 40 * (imgy + 1)))
+render = render.crop((0, 0, 45 * 100 + 5, 45 * (imgy + 1) + 5))
 
 from datetime import datetime
 now = datetime.now().strftime("%Y%m%d-%H%M%S")
