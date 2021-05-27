@@ -1,5 +1,13 @@
 GAME_VERSION = "1.3.3.1"
 
+def add_noise(img, AMT):
+	noise_img = Image.new("RGBA", img.size)
+	noise_img.putdata([(int(random.random() * AMT - AMT/2), int(random.random() * AMT - AMT/2), int(random.random() * AMT - AMT/2), 0) for _ in range(img.size[0] * img.size[1])])
+	img = ImageChops.add(img, noise_img)
+	noise_img.putdata([(int(random.random() * AMT - AMT/2), int(random.random() * AMT - AMT/2), int(random.random() * AMT - AMT/2), 0) for _ in range(img.size[0] * img.size[1])])
+	img = ImageChops.subtract(img, noise_img)
+	return img
+
 def get_concat_h_repeat(im, column):
     dst = Image.new('RGB', (im.width * column, im.height))
     for x in range(column):
@@ -23,7 +31,7 @@ def load_image(imagename):
 		images[imagename] = Image.open(requests.get(IMAGE_URL + imagename + ".png", stream=True).raw)
 	return images[imagename]
 
-from PIL import Image, ImageFilter, ImageDraw
+from PIL import Image, ImageFilter, ImageDraw, ImageChops
 import json
 import xml
 import requests
@@ -32,6 +40,7 @@ from bs4 import BeautifulSoup
 import untangle
 import base64
 import io
+import random
 
 skinfiles = set(["players"])
 textilefiles = set()
@@ -242,6 +251,7 @@ for a in soup.find_all("a"):
 						srcy = imgTileSize * imageindex
 
 					icon = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((40, 40), Image.NEAREST)
+					#icon = add_noise(icon, 20)
 					edges = icon.split()[-1].filter(ImageFilter.MaxFilter(3))
 					shadow = edges.filter(ImageFilter.BoxBlur(7)).point(lambda alpha: alpha // 2)
 					render.paste(allblack, (imgx * 45 + 5, imgy * 45 + 5), shadow)
