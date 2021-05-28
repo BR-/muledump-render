@@ -31,7 +31,7 @@ def load_image(imagename):
 		images[imagename] = Image.open(requests.get(IMAGE_URL + imagename + ".png", stream=True).raw)
 	return images[imagename]
 
-from PIL import Image, ImageFilter, ImageDraw, ImageChops
+from PIL import Image, ImageFilter, ImageDraw, ImageChops, ImageOps
 import json
 import xml
 import requests
@@ -250,7 +250,8 @@ for a in soup.find_all("a"):
 						srcx = 0
 						srcy = imgTileSize * imageindex
 
-					icon = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((40, 40), Image.NEAREST)
+					icon = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((32, 32), Image.NEAREST)
+					icon = ImageOps.expand(icon, 4)
 					#icon = add_noise(icon, 20)
 					edges = icon.split()[-1].filter(ImageFilter.MaxFilter(3))
 					shadow = edges.filter(ImageFilter.BoxBlur(7)).point(lambda alpha: alpha // 2)
@@ -271,7 +272,8 @@ for a in soup.find_all("a"):
 						srcw = img.size[0] / imgTileSize
 						srcx = imgTileSize * (maskindex % srcw)
 						srcy = imgTileSize * (maskindex // srcw)
-						mask = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((40, 40), Image.NEAREST)
+						mask = img.crop((srcx, srcy, srcx+imgTileSize, srcy+imgTileSize)).resize((32, 32), Image.NEAREST)
+						mask = ImageOps.expand(mask, 4)
 						if "Tex1" in dir(obj) and "Tex2" in dir(obj):
 							print(href,id)
 							1/0
@@ -289,7 +291,7 @@ for a in soup.find_all("a"):
 							1/0
 						a,r,g,b = argb_split(tex)
 						if a == 1: #color
-							img = Image.new("RGB", (40, 40), (r,g,b))
+							img = Image.new("RGB", (32, 32), (r,g,b))
 						else: #texture
 							if r > 0 or g > 0:
 								print(href,id)
@@ -301,7 +303,8 @@ for a in soup.find_all("a"):
 							srcy = a * (b // srcw)
 							img = img.crop((srcx, srcy, srcx+a, srcy+a))
 							img = get_concat_tile_repeat(img, 10, 10)
-							img = img.crop((0, 0, 40, 40))
+							img = img.crop((0, 0, 32, 32))
+						img = ImageOps.expand(img, 4)
 						render.paste(allblack, (imgx * 45 + 5, imgy * 45 + 5), mask)
 						render.paste(img, (imgx * 45 + 5, imgy * 45 + 5), mask.split()[0])
 						render.paste(img, (imgx * 45 + 5, imgy * 45 + 5), mask.split()[1])
