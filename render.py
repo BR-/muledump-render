@@ -226,10 +226,10 @@ for a in soup.find_all("a"):
 						imageindex = obj.AnimatedTexture.Index.cdata
 					if imageindex.startswith("0x"):
 						imageindex = int(imageindex[2:], 16)
-						normalIndex = True
 					else:
 						imageindex = int(imageindex)
-						normalIndex = False
+					# checking whether imageindex is hex or decimal is usually pretty good at telling normalIndex, but some items are wrong!
+					normalIndex = imagename not in ["oryxSanctuaryChars32x32", "chars8x8dEncounters", "chars8x8rPets1", "chars16x16dEncounters2", "playerskins", "petsDivine", "epicHiveChars16x16", "playerskins16"]
 					img = load_image(imagename)
 
 					# TODO: manifest.xml has this data, but this seems alright for now
