@@ -75,7 +75,7 @@ for a in soup.find_all("a"):
 		#print(">>>", href)
 		try:
 			xmldata = requests.get(XML_URL + href).content.decode("utf-8")
-			#if "playerskins_mask" in xmldata:
+			#if "Beer Slurp" in xmldata:
 				#print(href)
 			data = untangle.parse(xmldata)
 		except xml.sax._exceptions.SAXParseException:
@@ -186,7 +186,11 @@ for a in soup.find_all("a"):
 					textures[key] = data
 				if obj.Class.cdata == "Equipment" or obj.Class.cdata == "Dye":
 					if "BagType" not in dir(obj):
-						continue #Procs are Equipment too for some reason!??
+						# Procs are Equipment too for some reason!??
+						# but also there are items without bags? e.g. Beer Slurp
+						BagType = 0
+					else:
+						BagType = int(obj.BagType.cdata)
 					if "DisplayId" in dir(obj) and obj.Class.cdata != "Dye":
 						id = obj.DisplayId.cdata
 					else:
@@ -321,7 +325,7 @@ for a in soup.find_all("a"):
 						renderdraw.text((imgx * 45 + 5 + 3 + 1, imgy * 45 + 5 + 3 + 1), num, fill="#000")
 						renderdraw.text((imgx * 45 + 5 + 3 - 0, imgy * 45 + 5 + 3 - 0), num, fill="#fff")
 
-					items[type] = [id, slot, tier, imgx * 45 + 5, imgy * 45 + 5, xp, fp, int(obj.BagType.cdata), soulbound, utst]
+					items[type] = [id, slot, tier, imgx * 45 + 5, imgy * 45 + 5, xp, fp, BagType, soulbound, utst]
 					imgx += 1
 					if imgx >= 100:
 						imgx = 0
