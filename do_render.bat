@@ -2,7 +2,7 @@
 
 git status
 
-del http_cache.sqlite
+del http_cache.sqlite constants.js sheets.js renders.png
 pipenv run render.py
 copy /Y constants.js ..\muledump\lib\
 copy /Y sheets.js ..\muledump\lib\
