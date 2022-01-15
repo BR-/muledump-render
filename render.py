@@ -1,4 +1,4 @@
-GAME_VERSION = "2.0.2.0.0"
+GAME_VERSION = "2.1.0.0.0"
 
 def add_noise(img, AMT):
 	noise_img = Image.new("RGBA", img.size)
