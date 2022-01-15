@@ -295,20 +295,22 @@ for a in soup.find_all("a"):
 							1/0
 						a,r,g,b = argb_split(tex)
 						if a == 1: #color
-							img = Image.new("RGB", (32, 32), (r,g,b))
+							img = Image.new("RGB", (40, 40), (r,g,b))
 						else: #texture
 							if r > 0 or g > 0:
-								print(href,id)
-								1/0
-							textilefiles.add(a)
-							img = load_image(f"textile{a}x{a}")
-							srcw = img.size[0] / a
-							srcx = a * (b % srcw)
-							srcy = a * (b // srcw)
-							img = img.crop((srcx, srcy, srcx+a, srcy+a))
-							img = get_concat_tile_repeat(img, 10, 10)
-							img = img.crop((0, 0, 32, 32))
-						img = ImageOps.expand(img, 4)
+								print("invalid texture, would crash:", href,id)
+								print("continuing with error.png instead.")
+								img = Image.open("error.png")
+							else:
+								textilefiles.add(a)
+								img = load_image(f"textile{a}x{a}")
+								srcw = img.size[0] / a
+								srcx = a * (b % srcw)
+								srcy = a * (b // srcw)
+								img = img.crop((srcx, srcy, srcx+a, srcy+a))
+								img = get_concat_tile_repeat(img, 10, 10)
+								img = img.crop((0, 0, 32, 32))
+								img = ImageOps.expand(img, 4)
 						render.paste(allblack, (imgx * 45 + 5, imgy * 45 + 5), mask)
 						render.paste(img, (imgx * 45 + 5, imgy * 45 + 5), mask.split()[0])
 						render.paste(img, (imgx * 45 + 5, imgy * 45 + 5), mask.split()[1])
