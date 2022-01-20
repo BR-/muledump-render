@@ -299,8 +299,8 @@ for a in soup.find_all("a"):
 						else: #texture
 							if r > 0 or g > 0:
 								print("invalid texture, would crash:", href,id)
-								print("continuing with animated_cloth.png instead.")
-								img = Image.open("animated_cloth.png")
+								print("continuing with error.png instead.")
+								img = Image.open("error.png")
 							else:
 								textilefiles.add(a)
 								img = load_image(f"textile{a}x{a}")
