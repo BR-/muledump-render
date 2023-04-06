@@ -47,10 +47,10 @@ textilefiles = set()
 
 requests_cache.install_cache(backend="sqlite")
 
-XML_URL = "https://www.haizor.net/rotmg/assets/production/xml/"
-IMAGE_URL = "https://www.haizor.net/rotmg/assets/production/sheets/"
+XML_URL = "https://assets.muledump.com/"
+IMAGE_URL = "https://assets.muledump.com/sheets/"
 
-soup = BeautifulSoup(requests.get(XML_URL).content, "html.parser")
+soup = BeautifulSoup(requests.get(XML_URL+"xml.html").content, "html.parser")
 images = {}
 render = Image.new("RGBA", (45 * 100 + 5, 45 * 100 + 5))
 renderdraw = ImageDraw.Draw(render)
@@ -70,7 +70,7 @@ textures = {}
 render.paste(Image.open("error.png"), (50, 5))
 
 for a in soup.find_all("a"):
-	href = a.get("href")
+	href = a.get("href").replace("\\", "/")
 	if href is not None:
 		#print(">>>", href)
 		try:
@@ -86,7 +86,12 @@ for a in soup.find_all("a"):
 			for obj in data.Objects.Object:
 				if "Class" not in dir(obj):
 					continue
-				if obj.Class.cdata == "Player":
+				clazz = None
+				if isinstance(obj.Class, list):
+					clazz = obj.Class[0]
+				else:
+					clazz = obj.Class
+				if clazz.cdata == "Player":
 					baseStats = [
 						int(obj.MaxHitPoints.cdata),
 						int(obj.MaxMagicPoints.cdata),
@@ -142,7 +147,7 @@ for a in soup.find_all("a"):
 						obj.AnimatedTexture.File.cdata,
 						key,
 					]
-				if obj.Class.cdata == "Skin" or "Skin" in dir(obj):
+				if clazz.cdata == "Skin" or "Skin" in dir(obj):
 					if not obj.PlayerClassType.cdata.startswith('0x'):
 						1/0
 					if not obj["type"].startswith('0x'):
@@ -159,12 +164,12 @@ for a in soup.find_all("a"):
 						int(obj.PlayerClassType.cdata[2:], 16)
 					]
 					skinfiles.add(obj.AnimatedTexture.File.cdata)
-				elif obj.Class.cdata == "PetAbility" or "PetAbility" in dir(obj):
+				elif clazz.cdata == "PetAbility" or "PetAbility" in dir(obj):
 					if obj["type"].startswith("0x"):
 						petAbilities[int(obj["type"][2:], 16)] = obj["id"]
 					else:
 						1/0
-				if obj.Class.cdata == "Dye":
+				if clazz.cdata == "Dye":
 					if "Tex1" in dir(obj):
 						key = obj.Tex1.cdata
 						offs = 0
@@ -184,15 +189,18 @@ for a in soup.find_all("a"):
 					else:
 						1/0
 					textures[key] = data
-				if obj.Class.cdata == "Equipment" or obj.Class.cdata == "Dye":
+				if clazz.cdata == "Equipment" or clazz.cdata == "Dye":
 					if "BagType" not in dir(obj):
 						# Procs are Equipment too for some reason!??
 						# but also there are items without bags? e.g. Beer Slurp
 						BagType = 0
 					else:
 						BagType = int(obj.BagType.cdata)
-					if "DisplayId" in dir(obj) and obj.Class.cdata != "Dye":
-						id = obj.DisplayId.cdata
+					if "DisplayId" in dir(obj) and clazz.cdata != "Dye":
+						if isinstance(obj.DisplayId, list):
+							id = obj.DisplayId[0].cdata
+						else:
+							id = obj.DisplayId.cdata
 					else:
 						id = obj["id"]
 					#print(id)
@@ -213,7 +221,10 @@ for a in soup.find_all("a"):
 						fp = int(obj.feedPower.cdata)
 					else:
 						fp = 0
-					slot = int(obj.SlotType.cdata)
+					if isinstance(obj.SlotType, list):
+						slot = int(obj.SlotType[0].cdata)
+					else:
+						slot = int(obj.SlotType.cdata)
 					soulbound = "Soulbound" in dir(obj)
 					utst = 0
 					if "setName" in repr(obj):
