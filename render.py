@@ -221,10 +221,13 @@ for a in soup.find_all("a"):
 						fp = int(obj.feedPower.cdata)
 					else:
 						fp = 0
-					if isinstance(obj.SlotType, list):
-						slot = int(obj.SlotType[0].cdata)
+					if "SlotType" in dir(obj):
+						if isinstance(obj.SlotType, list):
+							slot = int(obj.SlotType[0].cdata)
+						else:
+							slot = int(obj.SlotType.cdata)
 					else:
-						slot = int(obj.SlotType.cdata)
+						slot = -1
 					soulbound = "Soulbound" in dir(obj)
 					utst = 0
 					if "setName" in repr(obj):
